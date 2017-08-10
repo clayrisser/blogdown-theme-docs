@@ -1,0 +1,153 @@
+<dom-module id="theme-posts">
+  <template>
+    <style>
+      :host {
+        display: none;
+        width: 100%;
+      }
+      paper-card {
+        --paper-card-background-color: var(--paper-menu-background-color);
+      }
+      .card-content {
+        padding: 0px !important;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .card-actions a, .feature-image a, .title {
+        text-decoration: none;
+        color: inherit;
+      }
+      .card-body {
+        padding: 16px;
+        flex: 2;
+        min-width: 200px;
+      }
+      .card-heading {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .featured-image {
+        flex: 1;
+      }
+      .featured-image .image {
+        min-height: 156px;
+        min-width: 156px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        -webkit-box-shadow: inset 0px 0px 0px 9999px rgba(0,0,0,0.25);
+        -moz-box-shadow: inset 0px 0px 0px 9999px rgba(0,0,0,0.25);
+        box-shadow: inset 0px 0px 0px 9999px rgba(0,0,0,0.25);
+      }
+      .post {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .meta {
+        margin-left: auto;
+        text-align: right;
+      }
+      .title h2 {
+        margin: 0px;
+      }
+      .title {
+        margin-right: 10px;
+      }
+      .header {
+        padding: 0px 20px 10px 20px;
+      }
+    </style>
+    <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+
+    <div class="header">
+      <h1>[[page.title]]</h1>
+    </div>
+
+    <template is="dom-repeat" items="[[posts]]" as="post" restamp>
+      <paper-card class="post" elevation="3">
+        <div class="card-content" style$="flex-direction:row[[flexDirection(index)]]">
+          <template is="dom-if" if="[[post.featuredImage]]">
+            <a class="featured-image" href="/[[page.slug]]/[[post.slug]]">
+              <div class="image" style$="background-image:url('[[post.featuredImage]]')"></div>
+            </a>
+          </template>
+          <div class="card-body">
+            <div class="card-heading">
+              <a class="title" href="/[[page.slug]]/[[post.slug]]">
+                <h2>
+                  [[post.title]]
+                </h2>
+              </a>
+              <div class="meta">
+                <div style$="font-weight:bold">[[getDate(post.date)]]</div>
+                <div>[[getAuthorDisplayName(post.author)]]</div>
+              </div>
+            </div>
+            <div>[[post.description]]</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/[[page.slug]]/[[post.slug]]">
+            <paper-button>Read More</paper-button>
+          </a>
+        </div>
+      </paper-card>
+    </template>
+
+  </template>
+  <script>
+    class ThemePosts {
+      beforeRegister() {
+        this.is = 'theme-posts';
+
+        this.properties = {
+          authors: {
+            type: Object,
+            statePath: 'authors'
+          },
+          settings: {
+            type: Object,
+            statePath: 'settings'
+          },
+          animationConfig: {
+            value: function() {
+              const themeSettings = app.getThemeSettings();
+              return {
+                entry: {
+                  name: themeSettings.pageTransition || 'scale-up-animation',
+                  node: this
+                }
+              }
+            }
+          }
+        };
+      }
+
+      get behaviors() {
+        return [
+          PostsBehavior,
+          Polymer.NeonAnimationRunnerBehavior,
+          ReduxStateBehavior
+        ];
+      }
+
+      attached() {
+        this.style.display = 'inline-block';
+        this.playAnimation('entry');
+      }
+
+      flexDirection(i) {
+        return i % 2 === 0 ? '-reverse' : '';
+      }
+
+      getAuthorDisplayName(author) {
+        return author ? this.authors[author].displayName : '';
+      }
+
+      getDate(date) {
+        return date ? date.format(this.settings.dateFormat) : '';
+      }
+    }
+    Polymer(ThemePosts);
+  </script>
+</dom-module>
