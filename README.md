@@ -1,3 +1,3 @@
 # blogdown-theme-docs
 
-Docs theme for BlogDown
+Readthedocs theme for BlogDown
