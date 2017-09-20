@@ -4,6 +4,11 @@
       :host {
         width: 100%;
       }
+      body {
+        font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+        font-weight: normal;
+        color: #404040;
+      }
       paper-menu {
         margin-top: 64px;
         height: 100%;
@@ -18,9 +23,9 @@
         -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
         box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
       }
-      .content {
-        margin: 64px 0px -64px 0px;
-        padding: 20px;
+      .main-content {
+        margin: 0;
+        padding: 0;
       }
       .loading-bar {
         width: 100%;
@@ -210,6 +215,44 @@
         cursor: pointer;
         color: inherit;
       }
+      .nav-content-wrap {
+        margin-left: 300px;
+        background: #fcfcfc;
+        min-height: 100%;
+        display: block;
+      }
+      .nav-content {
+        padding: 1.618em 3.236em;
+        height: 100%;
+        max-width: 800px;
+        margin: auto;
+      }
+      .breadcrumbs {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        list-style-image: none;
+      }
+      .breadcrumbs li a {
+        display: inline-block;
+        padding-right: 5px;
+      }
+      a:visited {
+        color: #9B59B6;
+      }
+      a {
+        color: #2980B9;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      hr {
+        display: block;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid #e1e4e5;
+        margin: 24px 0;
+        padding: 0;
+      }
     </style>
     <style include="iron-positioning"></style>
 
@@ -227,7 +270,7 @@
               </form>
           </div>
         </div>
-        <div class="menu-vertical">
+        <div class="menu-vertical" selected="[[selectedMenuItem]]">
           <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
             <div class="section-title">
               <a href="/[[menuItem.slug]]">
@@ -237,6 +280,27 @@
           </template>
         </div>
       </nav>
+      <section class="nav-content-wrap">
+        <div class="nav-content">
+          <div>
+            <div role="navigation" aria-label="breadcrumbs navigation">
+              <ul class="breadcrumbs">
+                <li>
+                  <a href="index.html">Docs</a>
+                   &nbsp;»
+                 </li>
+                 <li>[[selectedMenuItem.title]]</li>
+              </ul>
+              <hr>
+            </div>
+            <div role="main">
+              <div class="main-content">
+                <blogdown-content></blogdown-content>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <!--<app-drawer id="drawer">
         <paper-menu id="sideMenu" selected="[[selectedMenuItem]]">
           <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
@@ -250,10 +314,6 @@
           </template>
         </paper-menu>
       </app-drawer>-->
-
-      <div class="content">
-        <blogdown-content></blogdown-content>
-      </div>
     </app-drawer-layout>
 
     <!--<app-toolbar class="fixed-top" elevation="1">
