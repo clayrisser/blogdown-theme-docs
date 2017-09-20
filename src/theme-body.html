@@ -12,7 +12,7 @@
         margin-bottom: 64px;
       }
       app-toolbar {
-        background-color: var(--default-primary-color);
+        background-color: red;
         color: var(--paper-toolbar-color);
         -webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
         -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.75);
@@ -86,12 +86,159 @@
       #toastInfo {
         --paper-toast-background-color: green;
       }
+      #drawer {
+        padding-bottom: 3em;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        min-height: 100%;
+        background: #343131;
+        z-index: 200;
+      }
+      #sideMenu {
+        width: 320px;
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 100%;
+      }
+
+      .grid-for-nav {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .nav-side-shift {
+        padding-bottom: 3em;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        min-height: 100%;
+        background-color: #343131;
+        z-index: 200;
+      }
+      .side-scroll {
+        width: 320px;
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 100%;
+      }
+      .nav-search {
+        width: 300px;
+        z-index: 200;
+        background-color: #2980B9;
+        text-align: center;
+        padding: .809em;
+        display: block;
+        color: #fcfcfc;
+        margin-bottom: .809em;
+      }
+      .nav-search a {
+        color: #fcfcfc;
+        font-size: 100%;
+        font-weight: bold;
+        display: inline-block;
+        padding: 4px 6px;
+        margin-bottom: .809em;
+      }
+      .logo {
+        display: block;
+        margin: 0 auto;
+        height: auto;
+        width: auto;
+        border-radius: 0;
+        max-width: 100%;
+        background: transparent;
+      }
+      .form {
+        width: 95%;
+        display: block;
+        margin-right: 10px;
+        text-align: center;
+        box-sizing: border-box;
+        color: #fcfcfc;
+        font-size: 100%;
+        font-weight: normal;
+        font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+      }
+      .search-form input {
+        width: 80%;
+        border-radius: 50px;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-color: #2472a4;
+        box-shadow: inset 0 1px 3px #ddd;
+        font-size: 80%;
+        display: inline-block;
+        transition: border 0.3s linear;
+        margin-left: -15px;
+        margin-right: 10px;
+      }
+      .menu-vertical {
+        width: 300px;
+        font-weight: normal;
+      }
+      .section-title {
+        height: 32px;
+        line-height: 32px;
+        padding: 0 1.618em;
+        margin-bottom: 0;
+        display: block;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 80%;
+        color: #555;
+        white-space: nowrap;
+        margin: 0;
+      }
+      .menu-vertical a {
+        line-height: 18px;
+        padding: .4045em 1.618em;
+        display: block;
+        position: relative;
+        font-size: 90%;
+        text-decoration: none;
+        cursor: pointer;
+        color: inherit;
+      }
     </style>
     <style include="iron-positioning"></style>
 
+
     <app-drawer-layout fullbleed narrow="{{narrow}}">
-      <app-drawer id="drawer" swipe-open>
-        <paper-menu selected="[[selectedMenuItem]]">
+      <nav class="nav-side-shift">
+        <div class="side-scroll">
+          <div class="nav-search">
+            <a href="#">
+              <img src="logo.svg" class="logo" alt="Logo here">
+            </a>
+            <div>
+              <form id="search-form" class="search-form">
+                <input type="text" placeholder="Search documentation">
+              </form>
+          </div>
+        </div>
+        <div class="menu-vertical">
+          <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
+            <div class="section-title">
+              <a href="/[[menuItem.slug]]">
+                [[menuItem.title]]
+              </a>
+            </div>
+          </template>
+        </div>
+      </nav>
+      <!--<app-drawer id="drawer">
+        <paper-menu id="sideMenu" selected="[[selectedMenuItem]]">
           <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
             <div class="menu-item">
               <a href="/[[menuItem.slug]]">
@@ -102,14 +249,14 @@
             </div>
           </template>
         </paper-menu>
-      </app-drawer>
+      </app-drawer>-->
 
       <div class="content">
         <blogdown-content></blogdown-content>
       </div>
     </app-drawer-layout>
 
-    <app-toolbar class="fixed-top" elevation="1">
+    <!--<app-toolbar class="fixed-top" elevation="1">
       <div class="fixed-top">
         <paper-progress
             class="loading-bar"
@@ -140,7 +287,7 @@
           </template>
         </div>
       </div>
-    </app-toolbar>
+    </app-toolbar>-->
 
     <div class="toast-hide" on-click="hideToast">
       <paper-toast id="toastInfo" class="toast" text="[[notification.message]]" duration="[[themeSettings.toastDuration]]"></paper-toast>

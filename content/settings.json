@@ -22,11 +22,6 @@
       "name": "posts",
       "singularForm": "post",
       "comment": "disqus"
-    },
-    {
-      "name": "portfolio",
-      "singularForm": "showcase",
-      "comment": false
     }
   ],
   "modules": {
