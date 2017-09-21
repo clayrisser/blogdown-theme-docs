@@ -5,8 +5,12 @@
         width: 100%;
       }
       body {
+        display: block;
         font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
         font-weight: normal;
+        min-height: 100%;
+        overflow-x: hidden;
+        margin: 0;
         color: #404040;
       }
       paper-menu {
@@ -14,7 +18,9 @@
         height: 100%;
       }
       app-drawer-layout {
-        margin-bottom: 64px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
       }
       app-toolbar {
         background-color: red;
@@ -205,6 +211,9 @@
         white-space: nowrap;
         margin: 0;
       }
+      .section-title a {
+        margin: 0;
+      }
       .menu-vertical a {
         line-height: 18px;
         padding: .4045em 1.618em;
@@ -217,15 +226,20 @@
       }
       .nav-content-wrap {
         margin-left: 300px;
-        background: #fcfcfc;
+        background-color: rgba(0, 0, 0, 0.05);
         min-height: 100%;
+        height: 100%;
         display: block;
+        box-sizing: border-box;
       }
       .nav-content {
         padding: 1.618em 3.236em;
+        min-height: 100%;
         height: 100%;
         max-width: 800px;
         margin: auto;
+        margin-left: 0;
+        background-color: #ffffff;
       }
       .breadcrumbs {
         margin: 0;
@@ -253,6 +267,25 @@
         margin: 24px 0;
         padding: 0;
       }
+      .menu-vertical ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .menu-post a {
+        line-height: 18px;
+        padding: .4045em 1.618em;
+        display: block;
+        position: relative;
+        font-size: 90%;
+        color: #b3b3b3;
+      }
+      .menu-post a:hover {
+        background-color: #4e4a4a;
+      }
+      .breadcrumbs li {
+        display: inline-block;
+      }
     </style>
     <style include="iron-positioning"></style>
 
@@ -262,7 +295,7 @@
         <div class="side-scroll">
           <div class="nav-search">
             <a href="#">
-              <img src="logo.svg" class="logo" alt="Logo here">
+              <img src="thingdown-logo" class="logo" alt="Logo here">
             </a>
             <div>
               <form id="search-form" class="search-form">
@@ -272,11 +305,17 @@
         </div>
         <div class="menu-vertical" selected="[[selectedMenuItem]]">
           <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
-            <div class="section-title">
-              <a href="/[[menuItem.slug]]">
+            <p class="section-title">
+              <span>
                 [[menuItem.title]]
-              </a>
-            </div>
+              </span>
+            </p>
+            <ul>
+              <template is="dom-repeat" items="[[getPostsForTaxonomy(menuItem.slug)]]" as="post">
+                <li class="menu-post">
+                  <a href="/[[menuItem.slug]]/[[post.slug]]">[[post.title]]</a></li>
+              </template>
+            </ul>
           </template>
         </div>
       </nav>
@@ -286,10 +325,10 @@
             <div role="navigation" aria-label="breadcrumbs navigation">
               <ul class="breadcrumbs">
                 <li>
-                  <a href="index.html">Docs</a>
+                  <a href="/">Docs</a>
                    &nbsp;»
                  </li>
-                 <li>[[selectedMenuItem.title]]</li>
+                 <li>[[path]]</li>
               </ul>
               <hr>
             </div>
@@ -369,6 +408,14 @@
                 payload: narrow
               });
             };
+          },
+          path: (path) => {
+            return (dispatch) => {
+              dispatch({
+                type: IS_NARROW,
+                payload: path
+              });
+            };
           }
         };
 
@@ -395,6 +442,18 @@
           pages: {
             type: [],
             statePath: 'pages'
+          },
+          taxonomies: {
+            type: [],
+            statePath: 'taxonomies'
+          },
+          route: {
+            type: Object,
+            statePath: 'route',
+            observer: 'routeChanged'
+          },
+          path: {
+            type: String
           },
           settings: {
             type: Object,
@@ -434,6 +493,33 @@
         ];
       }
 
+      getCurrentTitle() {
+        console.log('Current title: ' + document.getElementById("title"));
+        return document.getElementById("title");
+      }
+
+      getPostsForTaxonomy(taxonomy) {
+        console.log('Posts for taxonomy!');
+        var posts = this.taxonomies[taxonomy];
+        if(!posts)
+          return [];
+        return posts;
+      }
+
+      getPath() {
+        console.log('GET PATH!!!!!');
+        if(this.route && this.route.slugs) {
+          var path = this.route.slugs['parent'];
+          if(this.route.slugs['child']) {
+            path += ' » ' + this.route.slugs['child'];
+          }
+
+          console.log('PATH: %s', path);
+          return path;
+        }
+        return 'Test';
+      }
+
       ready() {
         this.set('themeSettings', _.assign({
           toastDuration: 5000
@@ -441,8 +527,10 @@
         this.set('indeterminateLoading', true);
         this.set('socialAccounts', []);
         this.set('menuItems', []);
+        this.set('path', this.getPath());
         this.loadMenuItems();
         this.loadSocialAccounts();
+        console.log('Current title: ' + document.getElementById("title"));
       }
 
       loadMenuItems() {
@@ -475,6 +563,12 @@
 
       narrowChanged() {
         this.dispatch('isNarrow', this.narrow);
+      }
+
+      routeChanged() {
+        console.log('ROUTE CHANGED');
+        this.set('path', this.getPath());
+        //this.dispatch('path', this.getPath());
       }
 
       notificationsChanged() {
