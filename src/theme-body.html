@@ -249,7 +249,7 @@
       }
       .breadcrumbs li a {
         display: inline-block;
-        padding-right: 5px;
+        padding: 0px;
       }
       a:visited {
         color: #9B59B6;
@@ -285,6 +285,7 @@
       }
       .breadcrumbs li {
         display: inline-block;
+        padding: 0;
       }
     </style>
     <style include="iron-positioning"></style>
@@ -325,8 +326,8 @@
             <div role="navigation" aria-label="breadcrumbs navigation">
               <ul class="breadcrumbs">
                 <li>
-                  <a href="/">Docs</a>
-                   &nbsp;»
+                  <a href="/" class="test">Docs</a>
+                   &nbsp;»&nbsp;
                  </li>
                  <li>[[path]]</li>
               </ul>
@@ -509,9 +510,11 @@
       getPath() {
         console.log('GET PATH!!!!!');
         if(this.route && this.route.slugs) {
-          var path = this.route.slugs['parent'];
+          var parent = this.route.slugs['parent'];
+          var path = parent.charAt(0).toUpperCase() + parent.slice(1);
           if(this.route.slugs['child']) {
-            path += ' » ' + this.route.slugs['child'];
+            var child = this.route.slugs['child'];
+            path += ' » ' + child.charAt(0).toUpperCase() + child.slice(1);
           }
 
           console.log('PATH: %s', path);
