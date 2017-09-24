@@ -510,14 +510,24 @@
       getPath() {
         console.log('GET PATH!!!!!');
         if(this.route && this.route.slugs) {
-          var parent = this.route.slugs['parent'];
-          var path = parent.charAt(0).toUpperCase() + parent.slice(1);
+          let separators = ['-','_'];
+          let parent = this.route.slugs['parent'];
+          let split = parent.split(new RegExp(separators.join('|'), 'g'));
+          let path = '';
+          for(let i = 0; i < split.length; i++) {
+            path += split[i].charAt(0).toUpperCase() + split[i].slice(1);
+          }
+          //var path = parent.charAt(0).toUpperCase() + parent.slice(1);
           if(this.route.slugs['child']) {
-            var child = this.route.slugs['child'];
-            path += ' » ' + child.charAt(0).toUpperCase() + child.slice(1);
+            path += ' »';
+            let child = this.route.slugs['child'];
+            split = child.split(new RegExp(separators.join('|'), 'g'));
+            for(let i = 0; i < split.length; i++) {
+              path += ' ' + split[i].charAt(0).toUpperCase() + split[i].slice(1);
+            }
           }
 
-          console.log('PATH: %s', path);
+          //console.log('PATH: %s', path);
           return path;
         }
         return 'Test';
