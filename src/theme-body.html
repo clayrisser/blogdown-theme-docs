@@ -490,8 +490,19 @@
           BodyBehavior,
           Polymer.NeonAnimationRunnerBehavior,
           ReduxActionsBehavior,
-          ReduxStateBehavior
+          ReduxStateBehavior,
+          HooksBehavior
         ];
+      }
+
+      registerHooks() {
+        return {
+          postAttached: this.postAttached.bind(this)
+        };
+      }
+
+      postAttached() {
+        console.log('THE POST IS ATTACHED');
       }
 
       getCurrentTitle() {
