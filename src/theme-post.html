@@ -19,7 +19,7 @@
         color: #ffffff;
         text-shadow: #000000 0px 0px 12px;
       }
-      .content {
+      .body-content {
         width: 100%;
       }
       .comment {
@@ -45,6 +45,12 @@
         position: fixed;
         background-size: cover;
         background-repeat: no-repeat;
+      }
+      .body-content h2 {
+        margin-top: 0px;
+      }
+      h2 {
+        color: red;
       }
     </style>
     <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
@@ -77,11 +83,11 @@
       </div>
     </template>
 
-    <paper-card class="content" elevation="3">
+    <!--<paper-card class="content" elevation="3">-->
       <div class="body-content">
         <blogdown-render post="[[post]]"></blogdown-render>
       </div>
-    </paper-card>
+    <!--</paper-card>-->
 
     <template is="dom-if" if="[[post.taxonomy.comment]]">
       <paper-card class="comment" elevation="3">
@@ -105,6 +111,10 @@
           settings: {
             type: Object,
             statePath: 'settings'
+          },
+          notifications: {
+            type: Object,
+            statePath: 'notifications'
           },
           animationConfig: {
             value: function() {
@@ -130,6 +140,9 @@
       }
 
       attached() {
+        this.set('notifications', this.notifications.push({
+          type: 'bodyAttached'
+        }));
         this.style.display = 'inline-block';
         this.playAnimation('entry');
       }

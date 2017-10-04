@@ -287,6 +287,12 @@
         display: inline-block;
         padding: 0;
       }
+      .body-content h2 {
+        margin-top: 0px;
+      }
+      h2 {
+        color: red;
+      }
     </style>
     <style include="iron-positioning"></style>
 
@@ -314,7 +320,13 @@
             <ul>
               <template is="dom-repeat" items="[[getPostsForTaxonomy(menuItem.slug)]]" as="post">
                 <li class="menu-post">
-                  <a href="/[[menuItem.slug]]/[[post.slug]]">[[post.title]]</a></li>
+                  <a href="/[[menuItem.slug]]/[[post.slug]]">[[post.title]]</a>
+                  <ul>
+                    <template is="dom-repeat" items="[[headers]]" as="header">
+                      <li><a href="/[[menuItem.slug]]/[[post.slug]]#[[header.id]]">[[header.text]]</a></li>
+                    </template>
+                  </ul>
+                </li>
               </template>
             </ul>
           </template>
@@ -409,14 +421,6 @@
                 payload: narrow
               });
             };
-          },
-          path: (path) => {
-            return (dispatch) => {
-              dispatch({
-                type: IS_NARROW,
-                payload: path
-              });
-            };
           }
         };
 
@@ -455,6 +459,9 @@
           },
           path: {
             type: String
+          },
+          headers: {
+            type: Object
           },
           settings: {
             type: Object,
@@ -519,7 +526,7 @@
       }
 
       getPath() {
-        console.log('GET PATH!!!!!');
+        //console.log('GET PATH!!!!!');
         if(this.route && this.route.slugs) {
           let separators = ['-','_'];
           let parent = this.route.slugs['parent'];
@@ -533,6 +540,7 @@
             path += ' »';
             let child = this.route.slugs['child'];
             split = child.split(new RegExp(separators.join('|'), 'g'));
+            console.log('Split: %j', split);
             for(let i = 0; i < split.length; i++) {
               path += ' ' + split[i].charAt(0).toUpperCase() + split[i].slice(1);
             }
@@ -555,6 +563,11 @@
         this.loadMenuItems();
         this.loadSocialAccounts();
         console.log('Current title: ' + document.getElementById("title"));
+      }
+
+      attached() {
+        console.log('Body attached');
+        this.set('headers', this.getSecondaryHeaders());
       }
 
       loadMenuItems() {
@@ -592,6 +605,7 @@
       routeChanged() {
         console.log('ROUTE CHANGED');
         this.set('path', this.getPath());
+        this.set('headers', this.getSecondaryHeaders());
         //this.dispatch('path', this.getPath());
       }
 
