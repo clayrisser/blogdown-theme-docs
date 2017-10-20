@@ -27,6 +27,7 @@
     "clean": "node ./node_modules/gulp/bin/gulp clean",
     "copy": "node ./node_modules/gulp/bin/gulp copy",
     "build": "node ./node_modules/gulp/bin/gulp",
+    "pull": "docker pull thingdown/blogdown:latest",
     "vulcanize": "node ./node_modules/gulp/bin/gulp vulcanize",
     "babel": "node ./node_modules/gulp/bin/gulp babel",
     "essh": "docker exec -it some-blogdown /bin/sh"

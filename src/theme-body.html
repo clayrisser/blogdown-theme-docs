@@ -504,12 +504,22 @@
 
       registerHooks() {
         return {
-          postAttached: this.postAttached.bind(this)
+          rendererRendered: this.rendererRendered.bind(this)
         };
       }
 
-      postAttached() {
-        console.log('THE POST IS ATTACHED');
+      rendererRendered() {
+        if (this.route.slugs.child) {
+          console.log('THE POST RENDERER RENDERED');
+          const query = document.getElementsByClassName('body-content');
+          if (query.length > 0) {
+            window.setTimeout(() => {
+              const bodyContent = query[0];
+              const h2s = bodyContent.getElementsByTagName('h2');
+              console.log('h2\'s', h2s);
+            });
+          }
+        }
       }
 
       getCurrentTitle() {
@@ -566,7 +576,6 @@
       }
 
       attached() {
-        console.log('Body attached');
         this.set('headers', this.getSecondaryHeaders());
       }
 
@@ -579,6 +588,10 @@
             });
           }
         });
+      }
+
+      getSecondaryHeaders() {
+        return false;
       }
 
       loadSocialAccounts() {
