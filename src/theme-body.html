@@ -293,6 +293,14 @@
       h2 {
         color: red;
       }
+      li.header {
+        list-style: none;
+      }
+      li.header a {
+        color: gray;
+        border-right: solid 1px #c9c9c9;
+        padding: 0.4045em 2.427em;
+      }
     </style>
     <style include="iron-positioning"></style>
 
@@ -321,11 +329,13 @@
               <template is="dom-repeat" items="[[getPostsForTaxonomy(menuItem.slug)]]" as="post">
                 <li class="menu-post">
                   <a href="/[[menuItem.slug]]/[[post.slug]]">[[post.title]]</a>
-                  <ul>
-                    <template is="dom-repeat" items="[[headers]]" as="header">
-                      <li><a href="/[[menuItem.slug]]/[[post.slug]]#[[header.id]]">[[header.text]]</a></li>
-                    </template>
-                  </ul>
+                  <template is="dom-if" if="[[booleanArray[index]]]">
+                    <ul class="[[true ? current : not-current]]">
+                      <template is="dom-repeat" items="[[headers]]" as="header">
+                        <li class="header"><a href="/[[menuItem.slug]]/[[post.slug]]#[[header.id]]">[[header.text]]</a></li>
+                      </template>
+                    </ul>
+                  </template>
                 </li>
               </template>
             </ul>
@@ -353,53 +363,9 @@
           </div>
         </div>
       </section>
-      <!--<app-drawer id="drawer">
-        <paper-menu id="sideMenu" selected="[[selectedMenuItem]]">
-          <template is="dom-repeat" items="[[menuItems]]" as="menuItem">
-            <div class="menu-item">
-              <a href="/[[menuItem.slug]]">
-                <paper-item on-click="closeDrawer" id="[[menuItem.slug]]">
-                  [[menuItem.title]]
-                </paper-item>
-              </a>
-            </div>
-          </template>
-        </paper-menu>
-      </app-drawer>-->
     </app-drawer-layout>
 
-    <!--<app-toolbar class="fixed-top" elevation="1">
-      <div class="fixed-top">
-        <paper-progress
-            class="loading-bar"
-            value="[[progress]]"
-            indeterminate="[[loading]]">
-        </paper-progress>
-      </div>
-      <div class="toolbar-content">
-        <div class="title-section">
-          <div class="drawer-button">
-            <paper-icon-button
-                class="drawer-button"
-                icon="menu"
-                on-click="toggleDrawer"
-                hidden=[[!narrow]]>
-            </paper-icon-button>
-          </div>
-          <a href="/" on-click="closeDrawer">[[settings.title]]</a>
-        </div>
-        <div class="social-accounts">
-          <template is="dom-repeat" items=[[socialAccounts]] as="socialAccount">
-            <a class="social-account"
-               href="[[socialAccount.url]]"
-               target="_blank">
-              <paper-icon-button icon="fa:[[socialAccount.type]]">
-              </paper-icon-button>
-            </a>
-          </template>
-        </div>
-      </div>
-    </app-toolbar>-->
+
 
     <div class="toast-hide" on-click="hideToast">
       <paper-toast id="toastInfo" class="toast" text="[[notification.message]]" duration="[[themeSettings.toastDuration]]"></paper-toast>
@@ -445,6 +411,10 @@
             statePath: 'meta'
           },
           pages: {
+            type: [],
+            statePath: 'pages'
+          },
+          booleanArray: {
             type: [],
             statePath: 'pages'
           },
@@ -510,16 +480,27 @@
 
       rendererRendered() {
         if (this.route.slugs.child) {
-          console.log('THE POST RENDERER RENDERED');
           const query = document.getElementsByClassName('body-content');
           if (query.length > 0) {
             window.setTimeout(() => {
               const bodyContent = query[0];
               const h2s = bodyContent.getElementsByTagName('h2');
-              console.log('h2\'s', h2s);
+              var headers = [];
+              for(var i = 0; i < h2s.length; i++) {
+                headers.push({
+                  text: h2s[i].innerText,
+                  id: h2s[i].id
+                });
+              }
+              this.set('headers', headers);
             });
           }
         }
+      }
+
+      checkCurrentPost(post) {
+        console.log("Post: %j", post);
+        return post.slug === this.route.slugs['child'];
       }
 
       getCurrentTitle() {
@@ -536,7 +517,6 @@
       }
 
       getPath() {
-        //console.log('GET PATH!!!!!');
         if(this.route && this.route.slugs) {
           let separators = ['-','_'];
           let parent = this.route.slugs['parent'];
@@ -556,7 +536,6 @@
             }
           }
 
-          //console.log('PATH: %s', path);
           return path;
         }
         return 'Test';
@@ -573,10 +552,6 @@
         this.loadMenuItems();
         this.loadSocialAccounts();
         console.log('Current title: ' + document.getElementById("title"));
-      }
-
-      attached() {
-        this.set('headers', this.getSecondaryHeaders());
       }
 
       loadMenuItems() {
